@@ -1,14 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 
 export default function FormulaEditor({ onFormulaChange, latex }) {
-  const [localLatex, setlocalLatex] = useState(latex || "\\( E = mc^2 \\)");
+  const [localLatex, setlocalLatex] = useState(latex);
 
+  useEffect(() => {
+    setlocalLatex(latex);
+  },[latex]);
   const handleInputChange = (event) => {
-    setlocalLatex(event.target.value);
-    onFormulaChange(event.target.value);    
+    const newLatex = event.target.value;
+    setlocalLatex(newLatex);
+    onFormulaChange(newLatex);
+
   };
 
   return (

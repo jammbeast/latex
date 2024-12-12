@@ -5,7 +5,7 @@ import FormulaRenderer from './formulaRenderer';
 import FormulaToolBox from "./formulaToolBox";
 import Image from 'next/image';
 export default function Home() {
-  const [latex, setLatex] = useState("");
+  const [latex, setLatex] = useState("\\frac{a}{b}\\");
 
   const handleFormulaChange = (newLatex) => {
     setLatex(newLatex);
@@ -17,7 +17,7 @@ export default function Home() {
     <div className = "min-h-screen flex-row grid pb-4">
     <div className=" flex flex-col">
   
-  <div className="flex flex-1">
+  <div className="flex flex-1  font-[family-name:var(--font-geist-mono)]">
     {/* Sidebar */}
     <FormulaToolBox onInsertElement={insertElementToEditor} />
       
