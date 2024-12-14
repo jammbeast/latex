@@ -1,33 +1,48 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import FormulaEditor from './formulaEditor';
 import FormulaRenderer from './formulaRenderer';
 import FormulaToolBox from "./formulaToolBox";
 import Image from 'next/image';
 export default function Home() {
-  const [latex, setLatex] = useState("\\frac{a}{b}\\");
+
+
+  const [latex, setLatex] = useState("");
+  const editorRef = useRef(null);
 
   const handleFormulaChange = (newLatex) => {
     setLatex(newLatex);
   };
   const insertElementToEditor = (element) => {
-    setLatex((prev) => `${prev} ${element}`)
+      if (editorRef.current) {
+        editorRef.current.insertAtCursor(element);
+      }
   };
+
+
+  const handleSetInsertFuction = (insertFunction) => {
+    setInsertFuction(() => insertFunction);
+  }
+
+
   return (
     <div className = "min-h-screen flex-row grid pb-4">
     <div className=" flex flex-col">
   
   <div className="flex flex-1  font-[family-name:var(--font-geist-mono)]">
-    {/* Sidebar */}
+    {/* сайд */}
     <FormulaToolBox onInsertElement={insertElementToEditor} />
       
     
-    {/* Main Content */}
+   
     <main className="flex-1 p-4 grid grid-cols-2 gap-4">
       {/* Редактор Формул */}
       <section className="p-4 rounded font-[family-name:var(--font-geist-mono)]">
         
-        <FormulaEditor onFormulaChange={handleFormulaChange} latex = {latex}/>
+        <FormulaEditor 
+        onFormulaChange={handleFormulaChange} 
+        ref = {editorRef} 
+        latex={latex}/>
         
       </section>
       

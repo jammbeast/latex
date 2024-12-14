@@ -1,20 +1,47 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useImperativeHandle, forwardRef} from "react";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 
-export default function FormulaEditor({ onFormulaChange, latex }) {
-  const [localLatex, setlocalLatex] = useState(latex);
+const FormulaEditor = forwardRef(({ latex, onFormulaChange, onInsert }, ref) => {
+  const [localLatex, setLocalLatex] = useState(latex);
+  const textAreaRef = useRef(null);
 
   useEffect(() => {
-    setlocalLatex(latex);
+    setLocalLatex(latex);
   },[latex]);
+
   const handleInputChange = (event) => {
     const newLatex = event.target.value;
-    setlocalLatex(newLatex);
+    setLocalLatex(newLatex);
     onFormulaChange(newLatex);
-
   };
+
+  const insertAtCursor = (insertText) => {
+    const textarea = textAreaRef.current;
+    if (!textarea)  return;
+
+    const cursorStart = textarea.selectionStart;
+    const cursorEnd = textarea.selectionEnd;
+    const currentValue = textarea.value;
+
+    const beforeCursor = currentValue.substring(0, cursorStart);
+    const afterCursor = currentValue.substring(cursorEnd);
+
+    const updatedValue =`${beforeCursor}${insertText}${afterCursor}`;
+
+    setLocalLatex(updatedValue);
+    onFormulaChange(updatedValue);
+    textarea.focus();
+    textarea.setSelectionRange(
+        cursorStart + insertText.length,
+        cursorEnd + insertText.length
+    );
+  };
+
+  useImperativeHandle(ref, () => ({
+    insertAtCursor,
+  }));
 
   return (
     <MathJaxContext>
@@ -23,6 +50,7 @@ export default function FormulaEditor({ onFormulaChange, latex }) {
         <textarea
           className="w-full h-full p-4 bg-transparent border border-gray-300 rounded resize-none focus:outline-none"
           value={localLatex}
+          ref = {textAreaRef}
           onChange={handleInputChange}
           placeholder="Введите формулу LaTeX"
           style={{
@@ -32,4 +60,6 @@ export default function FormulaEditor({ onFormulaChange, latex }) {
       </div>
     </MathJaxContext>
   );
-}
+});
+
+export default FormulaEditor;
